@@ -47,7 +47,8 @@ int* dimensions(int* map_data, int length) {
 }
 
 void drawLine(sf::RenderWindow window, sf:Point start, sf:Point end) {
-
+    //draw the line based on the points given in the given window
+    
 }
 
 void drawMap(sf::RenderWindow window, sf::Point start_point, int* map_data,

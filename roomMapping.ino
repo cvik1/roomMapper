@@ -10,11 +10,19 @@
 #include <Adafruit_MotorShield.h> //include motor shield library
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 #include <EPROM.h> //include library to write to Arduino "hard drive"
+#include <SPI.h>
+#include <SD.h>
 
 // initialize motor shield and motor objects
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *myMotor1 = AFMS.getMotor(1); // left motor
 Adafruit_DCMotor *myMotor2 = AFMS.getMotor(2); // right motor
+
+// the Sd card is connected to the SPI bus as follows
+const int MOSI = ;
+const int MISO = ;
+const int clk = ;
+const int CS = ;
 
 // define pins for untrasonic sensors
 const int trig1 = 12;
@@ -33,6 +41,8 @@ void setup() {
 
   myMotor1->setSpeed(100);
   myMotor2->setSpeed(100);
+
+  //start the SD card
 
 }
 
