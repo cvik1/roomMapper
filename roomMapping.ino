@@ -43,7 +43,18 @@ void setup() {
   myMotor2->setSpeed(100);
 
   //start the SD card
-
+  if (!SD.begin(CS)) {
+      //do something to let us know the card open 
+      return;
+  }
+  myFile = SD.open("map_data", FILE_WRITE);
+  //check to see if file opened
+  if (myFile) {
+      myFile.println("");
+  }
+  else {
+      //do something to let us know the file isnt open
+  }
 }
 
 void loop() {
@@ -71,37 +82,49 @@ void loop() {
   duration2 = pulseIn(echo2, HIGH); // read in off echo pin
   right = (duration2/2) / 29; // distance to right wall
 
+
+  int length; // value to keep track of "how many movements"
+
   // if right wall is within range, and no object is close enough
   // in front, continue
   if (front > 10 && right < 10) {
     delay(40);
     myMotor1->run(FORWARD);
     myMotor2->run(FORWARD);
-    // TODO add movement to mapping data
 
+    myFile.println(0);
+    length++;
   }
 
   // if right wall is too far, turn right and continue forward
+  //TODO calculate turning radius and configure turns
   else if (front > 10 && right > 10) {
     myMotor1->run(FORWARD); // run left forward and right backward
     myMotor2->run(BACKWARD); // to turn to the right
 
     myMotor1->run(FORWARD); // continue forward
-    myMotor2->run(BACKWARD);
+    myMotor2->run(FORWARD);
 
-    // TODO add movement to mapping data
+    myFile.println(1);
+    myFile.println(0);
+    length+=2;
   }
 
   // if right wall is close and front is close, we have a corner so
   // turn left and continue forward
+  //TODO calculate turning radius and configure turns
   else if (front < 10 && right < 10) {
     myMotor1->run(BACKWARD); // run left back and right forward
     myMotor2->run(FORWARD); // to turn to the left
 
     myMotor1->run(FORWARD); // continue forward
-    myMotor2->run(FORWARD);
+    myMotor2->run(FORWARD)
 
-    // TODO add movement to mapping data
+    myFile.println(2);
+    myFile.println(0);
+    length+=2;
   }
+
+  if (PUSHBUTTON) {}
 
 }
