@@ -1,4 +1,4 @@
-/*
+ /*
  * The following code reads data written to a file using roomMapping.ino
  * and draws the corresponding map from that data using the SFML graphics
  * library.

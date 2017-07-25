@@ -18,20 +18,25 @@ Adafruit_DCMotor *myMotor1 = AFMS.getMotor(1); // left motor
 Adafruit_DCMotor *myMotor2 = AFMS.getMotor(2); // right motor
 
 // the Sd card is connected to the SPI bus as follows
-const int MOSI = 0;
-const int MISO = 0;
-const int clk = 0;
-const int CS = 0;
+const int MOSI = 11;
+const int MISO = 12;
+const int clk = 13;
+const int CS = 8;
+
+//declare varaibles needed for SD functions
+Sd2Card card;
+SdVolume volume;
+SdFile file;
 
 // define the pushbutton pin
 const int PUSHBUTTON = 0;
 
 // define pins for untrasonic sensors
-const int trig1 = 12;
-const int echo1 = 13;
+const int trig1 = 6;
+const int echo1 = 7;
 
-const int trig2 = 6;
-const int echo2 = 7;
+const int trig2 = 2;
+const int echo2 = 3;
 
 void setup() {
   AFMS.begin(); // start motor shield
@@ -41,12 +46,12 @@ void setup() {
   pinMode(trig2, OUTPUT);
   pinMode(echo2, INPUT_PULLUP);
 
-  myMotor1->setSpeed(100);
-  myMotor2->setSpeed(100);
+  myMotor1->setSpeed(75);
+  myMotor2->setSpeed(75);
 
   //start the SD card
   if (!SD.begin(CS)) {
-      //do something to let us know the card open
+      //do something to let us know the card opened
       return;
   }
   myFile = SD.open("map_data", FILE_WRITE);
