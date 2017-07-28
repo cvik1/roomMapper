@@ -14,12 +14,12 @@
 
 // initialize motor shield and motor objects
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
-Adafruit_DCMotor *myMotor1 = AFMS.getMotor(1); // left motor
-Adafruit_DCMotor *myMotor2 = AFMS.getMotor(2); // right motor
+Adafruit_DCMotor *myMotor1 = AFMS.getMotor(2); // left motor
+Adafruit_DCMotor *myMotor2 = AFMS.getMotor(3); // right motor
 
 // the Sd card is connected to the SPI bus as follows
-const int MOSI = 11;
-const int MISO = 12;
+const int mosi = 11;
+const int miso = 12;
 const int clk = 13;
 const int CS = 8;
 
@@ -48,7 +48,7 @@ void setup() {
 
   myMotor1->setSpeed(75);
   myMotor2->setSpeed(75);
-
+/*
   //start the SD card
   if (!SD.begin(CS)) {
       //do something to let us know the card opened
@@ -62,6 +62,7 @@ void setup() {
   else {
       //do something to let us know the file isnt open
   }
+*/
 }
 
 void loop() {
@@ -90,48 +91,75 @@ void loop() {
   right = (duration2/2) / 29; // distance to right wall
 
 
-  int length; // value to keep track of "how many movements"
+  // int length; // value to keep track of "how many movements"
+
+  
+
 
   // if right wall is within range, and no object is close enough
   // in front, continue
-  if (front > 10 && right < 10) {
+  if (front > 15 && right < 10) {
     delay(40);
+
+    // robot has small tendency to right, so if right wall is too close, we'll do a small corrective turn
+    /*
+    if (right<5) {
+      delay(40);
+      myMotor1->run(BACKWARD); //run left back and right forward
+      myMotor2->run(FORWARD); // to turn left
+
+      delay(100); //wait short amount of time for very small turn
+
+      // this movement does not affect the map and so will not be recorded. 
+    }
+    */
+    
     myMotor1->run(FORWARD);
     myMotor2->run(FORWARD);
 
+    delay(400); // give robot time to move forward
+    /*
     myFile.println(0);
     length++;
+    */
   }
 
   // if right wall is too far, turn right and continue forward
-  //TODO calculate turning radius and configure turns
-  else if (front > 10 && right > 10) {
+  else if (front > 15 && right > 10) {
+    delay(40);
     myMotor1->run(FORWARD); // run left forward and right backward
     myMotor2->run(BACKWARD); // to turn to the right
 
+    delay(625); // wait long enough that we can turn 45˚
+    
     myMotor1->run(FORWARD); // continue forward
     myMotor2->run(FORWARD);
 
+    /*
     myFile.println(1);
-    myFile.println(0);
     length+=2;
+    */
   }
 
   // if right wall is close and front is close, we have a corner so
   // turn left and continue forward
   //TODO calculate turning radius and configure turns
-  else if (front < 10 && right < 10) {
+  else if (front < 15 && right < 10) {
+    delay(40);
     myMotor1->run(BACKWARD); // run left back and right forward
     myMotor2->run(FORWARD); // to turn to the left
 
+    delay(625); //wait long enough that we can turn 45˚
+    
     myMotor1->run(FORWARD); // continue forward
-    myMotor2->run(FORWARD)
+    myMotor2->run(FORWARD);
 
+    /*
     myFile.println(2);
-    myFile.println(0);
     length+=2;
+    */
   }
-
-  if (PUSHBUTTON) {}
-
+  myMotor1->run(RELEASE);
+  myMotor2->run(RELEASE);
+  delay(100);
 }
