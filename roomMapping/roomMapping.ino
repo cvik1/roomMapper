@@ -93,7 +93,7 @@ void loop() {
 
   // int length; // value to keep track of "how many movements"
 
-  
+
 
 
   // if right wall is within range, and no object is close enough
@@ -110,10 +110,10 @@ void loop() {
 
       delay(100); //wait short amount of time for very small turn
 
-      // this movement does not affect the map and so will not be recorded. 
+      // this movement does not affect the map and so will not be recorded.
     }
     */
-    
+
     myMotor1->run(FORWARD);
     myMotor2->run(FORWARD);
 
@@ -131,7 +131,7 @@ void loop() {
     myMotor2->run(BACKWARD); // to turn to the right
 
     delay(625); // wait long enough that we can turn 45˚
-    
+
     myMotor1->run(FORWARD); // continue forward
     myMotor2->run(FORWARD);
 
@@ -150,7 +150,7 @@ void loop() {
     myMotor2->run(FORWARD); // to turn to the left
 
     delay(625); //wait long enough that we can turn 45˚
-    
+
     myMotor1->run(FORWARD); // continue forward
     myMotor2->run(FORWARD);
 

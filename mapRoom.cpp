@@ -4,123 +4,137 @@
  * library.
  */
 
-#include <SFML/Graphics.hpp>
+#include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include <SFML/Graphics.hpp>
+
+using namespace sf;
 
 
 
 
-int* readCard(char* filename, int* length) {
-    ifstream infile(filename.c_str());
-    if (infile.fail())) {
-        throw runtime_error("Invalid file path");
+int* readData(std::string filename, int* length) {
+
+    std::ifstream infile(filename.c_str());
+    if (infile.fail()) {
+        throw std::runtime_error("Invalid file path");
     }
-    int* map_data = NULL;
-    infile>>legth;
-    map_data = new int[length];
+    infile >> *length; //read length of file from file
+    int* map_data = new int[*length]; //create array to read data into
     int num;
-    for (int i=0;i<length;i++) {
-        infile>>num;
+    for (int i=0;i<*length;i++) { //read all data from file into array
+        infile >> num;
         map_data[i] = num;
     }
     return map_data;
 }
 
-int* dimensions(int* map_data, int length) {
-    int dimensions = NULL;
-    int* = new int[4];
+int* getDimensions(int* map_data, int* length) {
+    int* dimensions = new int[4];
     int direction = 0; //0 for up, 1 for right, 2 for down, 3 for left
-
-    for(int i=0; i<length;) {
-        if (map_data[i] == 0) {
+    // using the direction and map data, we will record the dimesions
+    // of the map, so we can scale the graphics window accordingly
+    for(int i=0; i<*length;) {
+        if (map_data[i] == 0) {//if we go straight, then add 1 to that direction
             dimensions[direction] += 1;
         }
-        else if (map_data[i] == 1) {
-            direction = (direction+1)%4;
+        else if (map_data[i] == 1) {     // if we turn right, change the
+            direction = (direction+1)%4; // direction and add 1
             dimensions[direction] +=1;
         }
-        else if (map_data[i] == 2) {
-            direction = (direction-1)%4
+        else if (map_data[i] == 2) {     // if we turn left, change the
+            direction = (direction-1)%4;  // direction and add 1
             dimensions[direction] +=1;
         }
     }
     return dimensions;
 }
 
-void drawLine(sf::RenderWindow window, sf:Point start, sf:Point end) {
-    //draw the line based on the points given in the given window
-
-}
-
-void drawMap(sf::RenderWindow window, sf::Point start_point, int* map_data,
-        int length, int size) {
+void drawMap(RenderWindow window, int* map_data, int* length, int size) {
 
     int direction = 0; //start direction at 0 (forwards)
 
-    sf::Point start = start_point;
-    sf::Point end;
+    VertexArray lines(LineStrip, *length);
+    int x = 500;
+    int y = 500;
 
-    for (int i=0; i<length; i++) {
+    for (int i=0; i<*length; i++) {
+
+        lines[i].position = Vector2f(x,y);
+
         if (map_data[i] == 0) { //straight
             if (direction == 0) { //if going staight
-                //move end size pixels upwards of start
+                //move position size pixels upwards of previous
+                y -= size;
             }
             else if(direction == 1) { // if going right
-                //move end size pixels right of start
+                //move position size pixels right of previous
+                x += size;
             }
             else if(direction == 2) { // if going down
-                // move end size pixels down of start
+                // move position size pixels down of previous
+                y += size;
             }
             else if(direction == 3) {// if going left
-                // move end size pixels left of start
+                // move position size pixels left of previous
+                x -= size;
             }
             //when going straight direction does not change
         }
         else if (map_data[i] == 1) { //right turn
             if (direction == 0) { //if going up
-                //move end size pixels right of start
+                //move position size pixels right of previous
+                x += size;
             }
             else if(direction == 1) {// if going right
-                // move end size pixels down of start
+                // move position size pixels down of previous
+                y += size;
             }
             else if(direction == 2) {// if going down
-                // move end size pizels left of start
+                // move position size pizels left of previous
+                x -= size;
             }
             else if(direction == 3) {// if going left
-                // move end size pixels up of start
+                // move position size pixels up of previous
+                y -= size;
             }
             direction = (direction+1)%4; // change direction for turn
         }
         else if (map_data[i] == 2) { //left turn
             if (direction == 0) { //if going up
-                // move end size pixels left of start
+                // move position size pixels left of previous
+                x -= size;
             }
             else if(direction == 1) { //if going right
-                // move end size pixels up of start
+                // move position size pixels up of previous
+                y -= size;
             }
             else if(direction == 2) { //if going down
-                // move end size pixels right of start
+                // move position size pixels right of previous
+                x += size;
             }
-            else if(dircetion == 3) { //if going left
-                // move end size pixels down of start
+            else if(direction == 3) { //if going left
+                // move position size pixels down of previous
+                y += size;
             }
             direction = (direction-1)%4; // change direction for turn
         }
-        drawLine(window, start, end);
-        start = end;
     }
+    window.draw(lines);
+    return;
 }
 
 int main(int argc,char** argv) {
     int* length = NULL;
-    int* map_data =  readData(argv[1], length); //get the array of map data
+    std::string filename = argv[1]; //make filename into string
+    int* map_data =  readData(filename, length); //get the array of map data
 
     int* dimensions = NULL;
-    dimensions = dimensions(map_data, length); //get the dimensions of the map
+    *dimensions = getDimensions(map_data, length); //get the dimensions of the map
     int width, height;
     dimensions[0] = height; //get the height of the room in terms of "steps"
-    dimensions[3] = width  //get the width of the room in terms of "steps"
+    dimensions[3] = width;  //get the width of the room in terms of "steps"
     //each step is one rotation of the robot's wheels
     //we are using the left dimension for width as we start on the right side
 
@@ -131,13 +145,14 @@ int main(int argc,char** argv) {
     if (height>160 || width>160) { //if more than 160 segments in any direction
         int size = 3; //make segments smaller to fit
     }
-    if (hieght>300 || width> 300) { //if more than 300 segments in any direction
+    if (height>300 || width> 300) { //if more than 300 segments in any direction
         int size = 2; //make segments smaller
     }
 
-    sf::RenderWindow window(sf::VideoMode(1000,1000), "window");
+    RenderWindow window(sf::VideoMode(1000,1000), "window");
 
-    drawMap(window, start_point, map_data, length, size);
+    drawMap(window, map_data, length, size);
+
 
     return 0;
 }
