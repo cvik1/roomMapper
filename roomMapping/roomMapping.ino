@@ -28,8 +28,6 @@ Sd2Card card;
 SdVolume volume;
 SdFile file;
 
-// define the pushbutton pin
-const int PUSHBUTTON = 0;
 
 // define pins for untrasonic sensors
 const int trig1 = 6;

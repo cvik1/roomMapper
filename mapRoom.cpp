@@ -51,11 +51,11 @@ int* getDimensions(int* map_data, int* length) {
     return dimensions;
 }
 
-void drawMap(RenderWindow window, int* map_data, int* length, int size) {
+VertexArray* makeLines(int* map_data, int* length, int size) {
 
     int direction = 0; //start direction at 0 (forwards)
 
-    VertexArray lines(LineStrip, *length);
+    VertexArray* lines(LineStrip, length);
     int x = 500;
     int y = 500;
 
@@ -121,8 +121,8 @@ void drawMap(RenderWindow window, int* map_data, int* length, int size) {
             direction = (direction-1)%4; // change direction for turn
         }
     }
-    window.draw(lines);
-    return;
+
+    return lines;
 }
 
 int main(int argc,char** argv) {
@@ -131,8 +131,9 @@ int main(int argc,char** argv) {
     int* map_data =  readData(filename, length); //get the array of map data
 
     int* dimensions = NULL;
-    *dimensions = getDimensions(map_data, length); //get the dimensions of the map
-    int width, height;
+    dimensions = getDimensions(map_data, length); //get the dimensions of the map
+    int width = 0;
+    int height = 0;
     dimensions[0] = height; //get the height of the room in terms of "steps"
     dimensions[3] = width;  //get the width of the room in terms of "steps"
     //each step is one rotation of the robot's wheels
@@ -140,18 +141,19 @@ int main(int argc,char** argv) {
 
     int size; //declare the variable for size of each segment
     if (height>80 || width>80) { //if more than 80 segments in any direction
-        int size = 5; //make segments smaller to fit
+        size = 5; //make segments smaller to fit
     }
     if (height>160 || width>160) { //if more than 160 segments in any direction
-        int size = 3; //make segments smaller to fit
+        size = 3; //make segments smaller to fit
     }
     if (height>300 || width> 300) { //if more than 300 segments in any direction
-        int size = 2; //make segments smaller
+        size = 2; //make segments smaller
     }
 
-    RenderWindow window(sf::VideoMode(1000,1000), "window");
+    RenderWindow window(VideoMode(1000,1000), "window");
 
-    drawMap(window, map_data, length, size);
+    VertexArray* lines = makeLines(map_data, length, size);
+    //window.draw(lines); //draw the lines
 
 
     return 0;
