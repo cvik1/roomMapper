@@ -51,11 +51,11 @@ int* getDimensions(int* map_data, int* length) {
     return dimensions;
 }
 
-VertexArray* makeLines(int* map_data, int* length, int size) {
+VertexArray makeLines(int* map_data, int* length, int size) {
 
     int direction = 0; //start direction at 0 (forwards)
-
-    VertexArray* lines(LineStrip, length);
+    unsigned long linenum = (unsigned long)*length;
+    VertexArray lines(LinesStrip, linenum);
     int x = 500;
     int y = 500;
 
@@ -150,10 +150,27 @@ int main(int argc,char** argv) {
         size = 2; //make segments smaller
     }
 
+    VertexArray lines = makeLines(map_data, length, size);
+
     RenderWindow window(VideoMode(1000,1000), "window");
 
-    VertexArray* lines = makeLines(map_data, length, size);
-    //window.draw(lines); //draw the lines
+    while(window.isOpen()) {
+        window.clear()      //clear anything from the window
+        window.draw(lines); //draw our lines to the window
+        window.display();   //display the lines to the window
+
+        Event event;
+        while(window.pollEvent(event)) { //check for events in the window
+            if (event.type == Closed) {
+                window.close(); // if the user closes the window, close it
+            }
+        }
+    }
+
+    //delete all heap arrays free up memory
+    delete[] length;
+    delete[] map_data;
+    delete[] dimensions;
 
 
     return 0;
